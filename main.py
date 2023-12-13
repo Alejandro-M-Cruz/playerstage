@@ -1,9 +1,16 @@
+from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
 from functools import partial
+from itertools import groupby
+from multiprocessing import Pool
+from pathlib import Path
+from timeit import timeit
 from typing import TypedDict
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+from icecream import ic
+
+from plots import plot_data
 
 
 class LaserDimensions(TypedDict):
@@ -12,6 +19,14 @@ class LaserDimensions(TypedDict):
     la: float
     sx: float
     sy: float
+
+
+def get_log_files(log_dir: str) -> dict[str, str]:
+    log_dir = Path(log_dir)
+    grouped_log_files = groupby(log_dir.glob("**/*.log"), lambda f: f.parent.stem)
+    return {f"{group} {i}": str(log_file)
+            for group, log_files in grouped_log_files
+            for i, log_file in enumerate(log_files, start=1)}
 
 
 def read_log(log_file: str, interface: str):
@@ -65,72 +80,35 @@ def get_obstacle_data(position_data, laser_data):
     )
 
 
-def plot_path_and_obstacles(position_data, obstacle_data, title: str = "Path"):
-    time = position_data["time"].to_numpy()
-    plt.scatter(position_data["px"], position_data["py"], c=time, marker=".")
-    obs_x = flatten(obstacle_data["obs_x"].values)
-    obs_y = flatten(obstacle_data["obs_y"].values)
-    plt.scatter(obs_x, obs_y, c="black", marker=".", s=0.1)
-    plt.title(title)
-    plt.text(-12, -4, f"{time[-1] - time[0]:.2f} seconds")
-    plt.xlabel("x (m)")
-    plt.ylabel("y (m)")
-    plt.axis("equal")
-    plt.show()
-
-
 def polar_to_cartesian(r, theta):
     return r * np.cos(theta), r * np.sin(theta)
 
 
-def get_distance_to_target(position_data, target_x, target_y):
-    return np.sqrt((position_data["px"] - target_x) ** 2 + (position_data["py"] - target_y) ** 2)
-
-
-def plot_speed_and_distance_to_target(position_data, distance_to_target):
-    fig, (ax1, ax2) = plt.subplots(2, 1)
-    ax1.plot(position_data["time"], distance_to_target)
-    ax1.set_xlabel("Time (s)")
-    ax1.set_ylabel("Distance to target (m)")
-    ax2.plot(distance_to_target, get_scalar_speed(position_data))
-    ax2.set_xlabel("Distance to target (m)")
-    ax2.set_ylabel("Scalar speed (m/s)")
-    ax2.invert_xaxis()
-    plt.subplots_adjust(hspace=0.5)
-    plt.show()
-
-
-def plot_3d_path(position_data, title="3D path"):
-    axes = plt.axes(projection="3d")
-    scalar_velocities = np.sqrt(get_scalar_speed(position_data))
-    axes.scatter3D(position_data["px"], position_data["py"], scalar_velocities, c=position_data["time"], marker=".")
-    axes.set_title(title)
-    axes.set_xlabel("x (m)")
-    axes.set_ylabel("y (m)")
-    axes.set_zlabel("Scalar speed (m/s)")
-    plt.show()
-
-
-def flatten(sequence):
-    return np.stack(sequence).flatten()
-
-
-def get_scalar_speed(position_data):
-    return np.sqrt(position_data["vx"] ** 2 + position_data["vy"] ** 2)
-
-
-if __name__ == "__main__":
-    laser_lines = partial(read_log, "example.log", "laser")
-    position_lines = partial(read_log, "example.log", "position2d")
+def process_log_file(log_file: str, title: str = "Log"):
+    laser_lines = partial(read_log, log_file, "laser")
+    position_lines = partial(read_log, log_file, "position2d")
 
     laser_dimensions = get_laser_dimensions(laser_lines())
     laser_data = get_laser_data(laser_lines())
     position_data = get_position_data(position_lines())
     obstacle_data = get_obstacle_data(position_data, laser_data)
 
-    plot_path_and_obstacles(position_data, obstacle_data)
+    plot_data(position_data, obstacle_data, title)
 
-    distance_to_target = get_distance_to_target(position_data, -6, -7.5)
-    plot_speed_and_distance_to_target(position_data, distance_to_target)
 
-    plot_3d_path(position_data)
+def process_log_dir(log_dir: str):
+    log_files = get_log_files(log_dir)
+    ic(log_files)
+    with Pool() as p:
+        p.starmap(process_log_file, [(log_file, title) for title, log_file in log_files.items()], chunksize=3)
+
+
+def main(log_dir: str):
+    process_log_dir(log_dir)
+
+
+if __name__ == "__main__":
+    parser = ArgumentParser(formatter_class=ArgumentDefaultsHelpFormatter)
+    parser.add_argument("-l", "--log-dir", help="path to directory containing the log files", default="logs")
+    args = vars(parser.parse_args())
+    main(args["log_dir"])
