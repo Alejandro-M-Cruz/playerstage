@@ -1,5 +1,5 @@
 from functools import partial
-from typing import TypedDict, Generator
+from typing import TypedDict
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -15,15 +15,6 @@ class LaserDimensions(TypedDict):
     sy: float
 
 
-class LaserConfig(TypedDict):
-    scan_id: int
-    min_angle: float
-    max_angle: float
-    resolution: float
-    max_range: float
-    count: int
-
-
 def read_log(log_file: str, interface: str):
     with open(log_file) as f:
         yield from (line for line in f if len(splits := line.split()) > 3 and splits[3] == interface)
@@ -35,49 +26,54 @@ def get_laser_dimensions(laser_lines) -> LaserDimensions:
     return {name: float(value) for name, value in zip(laser_dimension_names, laser_dimension_values)}
 
 
-def get_laser_config(laser_lines) -> LaserConfig:
-    next(laser_lines)
-    laser_config_values = next(laser_lines).split()[7:13]
-    return {
-        "scan_id": int(laser_config_values[0]),
-        "min_angle": float(laser_config_values[1]),
-        "max_angle": float(laser_config_values[2]),
-        "resolution": float(laser_config_values[3]),
-        "max_range": float(laser_config_values[4]),
-        "count": int(laser_config_values[5])
-    }
-
-
 def get_laser_data(laser_lines):
     next(laser_lines)
-    laser_readings = np.genfromtxt(laser_lines, usecols=[0] + list(range(13, 735)))
-    times = laser_readings[:, 0]
-    ranges_and_intensities = laser_readings[:, 1:].reshape(len(times), -1, 2)
-    return ranges_and_intensities
+    laser_readings = np.genfromtxt(laser_lines, usecols=[0] + list(range(7, 735)))
+    metadata = laser_readings[:, :7]
+    ranges = laser_readings[:, 7::2]
+    intensities = laser_readings[:, 8::2]
+    laser_data = pd.DataFrame(
+        ([*m, r, i] for m, r, i in zip(metadata, ranges, intensities)),
+        columns=["time", "scan_id", "min_angle", "max_angle", "resolution", "max_range", "count",
+                 "ranges", "intensities"]
+    ).astype({"scan_id": "int64", "count": "int64"})
+    max_range = laser_data.loc[0, "max_range"]
+    laser_data["ranges"] = laser_data["ranges"].apply(lambda r: np.where(r >= max_range, np.nan, r))
+    return laser_data
 
 
 def get_position_data(position_lines):
     next(position_lines)
     position_readings = np.genfromtxt(position_lines, usecols=[0, 7, 8, 9, 10, 11, 12])
     position_fields = ["time", "px", "py", "pa", "vx", "vy", "va"]
-    return pd.DataFrame(position_readings, columns=position_fields).set_index("time")
+    return pd.DataFrame(position_readings, columns=position_fields)
 
 
-def get_obstacle_positions(position_data, laser_data):
-    laser_angles = np.linspace(laser_config["min_angle"], laser_config["max_angle"],
-                               laser_config["count"])
-    ranges = laser_data[:, :, 0]
-    intensities = laser_data[:, :, 1]
-    angles = position_data["pa"].to_numpy()[:, None] + laser_angles
+def get_obstacle_data(position_data, laser_data):
+    laser_reading = laser_data.loc[0]
+    laser_angles = np.linspace(laser_reading["min_angle"], laser_reading["max_angle"],
+                               laser_reading["count"])
+    pa = position_data["pa"].to_numpy()
+    angles = pa.repeat(len(laser_angles)).reshape((-1, len(laser_angles))) + laser_angles
+    ranges = np.stack(laser_data["ranges"].values)
     obs_relative_x, obs_relative_y = polar_to_cartesian(ranges, angles)
-    return position_data["px"] + obs_relative_x, position_data["py"] + obs_relative_y
+    row_size = obs_relative_x.shape[1]
+    obs_x = position_data["px"].to_numpy().repeat(row_size).reshape(-1, row_size) + obs_relative_x
+    obs_y = position_data["py"].to_numpy().repeat(row_size).reshape(-1, row_size) + obs_relative_y
+    return pd.DataFrame(
+        ([t, x, y] for t, x, y in zip(laser_data["time"], obs_x, obs_y)),
+        columns=["time", "obs_x", "obs_y"]
+    )
 
 
-def plot_path_and_obstacles(px, py, obs_x, obs_y, duration_seconds, title: str = "Path"):
-    plt.scatter(px, py, c=np.arange(len(px)), marker=".")
-    plt.scatter(obs_x, obs_y, c="black", marker=".")
+def plot_path_and_obstacles(position_data, obstacle_data, title: str = "Path"):
+    time = position_data["time"].to_numpy()
+    plt.scatter(position_data["px"], position_data["py"], c=time, marker=".")
+    obs_x = np.stack(obstacle_data["obs_x"].values).flatten()
+    obs_y = np.stack(obstacle_data["obs_y"].values).flatten()
+    plt.scatter(obs_x, obs_y, c="black", marker=".", s=0.1)
     plt.title(title)
-    plt.text(-12, -4, f"{duration_seconds:.2f} seconds")
+    plt.text(-12, -4, f"{time[-1] - time[0]:.2f} seconds")
     plt.xlabel("x (m)")
     plt.ylabel("y (m)")
     plt.axis("equal")
@@ -88,18 +84,28 @@ def polar_to_cartesian(r, theta):
     return r * np.cos(theta), r * np.sin(theta)
 
 
+def get_distance_to_target(position_data, target_x, target_y):
+    return np.sqrt((position_data["px"] - target_x) ** 2 + (position_data["py"] - target_y) ** 2)
+
+
+def plot_distance_to_target(time, distance_to_target):
+    plt.plot(time, distance_to_target)
+    plt.title("Distance to Target")
+    plt.xlabel("Time (s)")
+    plt.ylabel("Distance (m)")
+    plt.show()
+
+
 if __name__ == "__main__":
     laser_lines = partial(read_log, "example.log", "laser")
     position_lines = partial(read_log, "example.log", "position2d")
 
     laser_dimensions = get_laser_dimensions(laser_lines())
-    laser_config = get_laser_config(laser_lines())
     laser_data = get_laser_data(laser_lines())
     position_data = get_position_data(position_lines())
-    # obs_x, obs_y = get_obstacle_positions(position_data, laser_data)
-    obs_x, obs_y = [], []
-    movement_duration = position_data.index[-1] - position_data.index[0]
+    obstacle_data = get_obstacle_data(position_data, laser_data)
 
-    plot_path_and_obstacles(position_data["px"], position_data["py"],
-                            obs_x, obs_y,
-                            movement_duration)
+    plot_path_and_obstacles(position_data, obstacle_data)
+
+    distance_to_target = get_distance_to_target(position_data, -6, -7.5)
+    plot_distance_to_target(position_data["time"], distance_to_target)
