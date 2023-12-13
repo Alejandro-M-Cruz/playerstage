@@ -4,7 +4,6 @@ from typing import TypedDict
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from icecream import ic
 
 
 class LaserDimensions(TypedDict):
@@ -69,8 +68,8 @@ def get_obstacle_data(position_data, laser_data):
 def plot_path_and_obstacles(position_data, obstacle_data, title: str = "Path"):
     time = position_data["time"].to_numpy()
     plt.scatter(position_data["px"], position_data["py"], c=time, marker=".")
-    obs_x = np.stack(obstacle_data["obs_x"].values).flatten()
-    obs_y = np.stack(obstacle_data["obs_y"].values).flatten()
+    obs_x = flatten(obstacle_data["obs_x"].values)
+    obs_y = flatten(obstacle_data["obs_y"].values)
     plt.scatter(obs_x, obs_y, c="black", marker=".", s=0.1)
     plt.title(title)
     plt.text(-12, -4, f"{time[-1] - time[0]:.2f} seconds")
@@ -88,12 +87,36 @@ def get_distance_to_target(position_data, target_x, target_y):
     return np.sqrt((position_data["px"] - target_x) ** 2 + (position_data["py"] - target_y) ** 2)
 
 
-def plot_distance_to_target(time, distance_to_target):
-    plt.plot(time, distance_to_target)
-    plt.title("Distance to Target")
-    plt.xlabel("Time (s)")
-    plt.ylabel("Distance (m)")
+def plot_speed_and_distance_to_target(position_data, distance_to_target):
+    fig, (ax1, ax2) = plt.subplots(2, 1)
+    ax1.plot(position_data["time"], distance_to_target)
+    ax1.set_xlabel("Time (s)")
+    ax1.set_ylabel("Distance to target (m)")
+    ax2.plot(distance_to_target, get_scalar_speed(position_data))
+    ax2.set_xlabel("Distance to target (m)")
+    ax2.set_ylabel("Scalar speed (m/s)")
+    ax2.invert_xaxis()
+    plt.subplots_adjust(hspace=0.5)
     plt.show()
+
+
+def plot_3d_path(position_data, title="3D path"):
+    axes = plt.axes(projection="3d")
+    scalar_velocities = np.sqrt(get_scalar_speed(position_data))
+    axes.scatter3D(position_data["px"], position_data["py"], scalar_velocities, c=position_data["time"], marker=".")
+    axes.set_title(title)
+    axes.set_xlabel("x (m)")
+    axes.set_ylabel("y (m)")
+    axes.set_zlabel("Scalar speed (m/s)")
+    plt.show()
+
+
+def flatten(sequence):
+    return np.stack(sequence).flatten()
+
+
+def get_scalar_speed(position_data):
+    return np.sqrt(position_data["vx"] ** 2 + position_data["vy"] ** 2)
 
 
 if __name__ == "__main__":
@@ -108,4 +131,6 @@ if __name__ == "__main__":
     plot_path_and_obstacles(position_data, obstacle_data)
 
     distance_to_target = get_distance_to_target(position_data, -6, -7.5)
-    plot_distance_to_target(position_data["time"], distance_to_target)
+    plot_speed_and_distance_to_target(position_data, distance_to_target)
+
+    plot_3d_path(position_data)
