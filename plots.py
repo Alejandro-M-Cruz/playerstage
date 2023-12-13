@@ -15,9 +15,9 @@ def plot_data(position_data, obstacle_data, title="Path"):
     obs_x = np.stack(obstacle_data["obs_x"].values).flatten()
     obs_y = np.stack(obstacle_data["obs_y"].values).flatten()
 
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 9))
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(16, 10))
     fig.suptitle(title, fontsize=28)
-    plt.subplots_adjust(wspace=0.5, hspace=0.5)
+    plt.subplots_adjust(top=0.85, wspace=0.5, hspace=0.5)
 
     ax1.set_title("Distance to target")
     ax1.plot(position_data["time"], distances_to_target)
