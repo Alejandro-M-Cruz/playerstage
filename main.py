@@ -1,43 +1,45 @@
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter
-from functools import partial
 from itertools import groupby
 from multiprocessing import Pool
 from pathlib import Path
-from timeit import timeit
-from typing import TypedDict
+from typing import Iterable, TypeVar, Callable
 
 import numpy as np
 import pandas as pd
 from icecream import ic
 
-from plots import plot_data
+from log_data import LogMetadata, LogData
+from plots import plot_log_data, time_comparison
+
+T = TypeVar("T")
+K = TypeVar("K")
 
 
-class LaserDimensions(TypedDict):
-    lx: float
-    ly: float
-    la: float
-    sx: float
-    sy: float
+def get_logs_metadata(log_dir: str) -> Iterable[LogMetadata]:
+    """
+    Returns a list of log metadata according to the following directory structure:
+    log-dir/algorithm/difficulty/*.log
+    """
+    return (
+        {
+            "index": i,
+            "path": str(log_file),
+            "algorithm": algorithm_path.stem,
+            "difficulty": difficulty_path.stem
+        }
+        for algorithm_path in Path(log_dir).iterdir()
+        for difficulty_path in algorithm_path.iterdir()
+        for i, log_file in enumerate(difficulty_path.glob("*.log"), start=1)
+    )
 
 
-def get_log_files(log_dir: str) -> dict[str, str]:
-    log_dir = Path(log_dir)
-    grouped_log_files = groupby(log_dir.glob("**/*.log"), lambda f: f.parent.stem)
-    return {f"{group} {i}": str(log_file)
-            for group, log_files in grouped_log_files
-            for i, log_file in enumerate(log_files, start=1)}
+def group_by(iterable: Iterable[T], key_function: Callable[[T], K]) -> dict[K, list[T]]:
+    return {key: list(group) for key, group in groupby(iterable, key_function)}
 
 
 def read_log(log_file: str, interface: str):
     with open(log_file) as f:
         yield from (line for line in f if len(splits := line.split()) > 3 and splits[3] == interface)
-
-
-def get_laser_dimensions(laser_lines) -> LaserDimensions:
-    laser_dimension_names = ["lx", "ly", "la", "sx", "sy"]
-    laser_dimension_values = next(laser_lines).split()[7:12]
-    return {name: float(value) for name, value in zip(laser_dimension_names, laser_dimension_values)}
 
 
 def get_laser_data(laser_lines):
@@ -84,23 +86,32 @@ def polar_to_cartesian(r, theta):
     return r * np.cos(theta), r * np.sin(theta)
 
 
-def process_log_file(log_file: str, title: str = "Log"):
-    laser_lines = partial(read_log, log_file, "laser")
-    position_lines = partial(read_log, log_file, "position2d")
-
-    laser_dimensions = get_laser_dimensions(laser_lines())
-    laser_data = get_laser_data(laser_lines())
-    position_data = get_position_data(position_lines())
+def get_log_data(log_metadata: LogMetadata) -> LogData:
+    laser_data = get_laser_data(read_log(log_metadata["path"], "laser"))
+    position_data = get_position_data(read_log(log_metadata["path"], "position2d"))
     obstacle_data = get_obstacle_data(position_data, laser_data)
-
-    plot_data(position_data, obstacle_data, title)
+    return {
+        "metadata": log_metadata,
+        "laser_data": laser_data,
+        "position_data": position_data,
+        "obstacle_data": obstacle_data
+    }
 
 
 def process_log_dir(log_dir: str):
-    log_files = get_log_files(log_dir)
-    ic(log_files)
     with Pool() as p:
-        p.starmap(process_log_file, [(log_file, title) for title, log_file in log_files.items()], chunksize=3)
+        logs_data = p.map(get_log_data, get_logs_metadata(log_dir), chunksize=3)
+
+    for log_data in logs_data:
+        plot_log_data(log_data)
+
+    grouped_by_algorithm = group_by(logs_data, lambda ld: ld["metadata"]["algorithm"])
+    logs_data_grouped_by_algorithm_and_difficulty = {
+        algorithm: group_by(logs, lambda ld: ld["metadata"]["difficulty"])
+        for algorithm, logs in grouped_by_algorithm.items()
+    }
+
+    time_comparison(logs_data_grouped_by_algorithm_and_difficulty)
 
 
 def main(log_dir: str):

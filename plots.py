@@ -1,8 +1,36 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from icecream import ic
+
+from log_data import LogData
+from typing import Iterable
 
 
-def plot_data(position_data, obstacle_data, title="Path"):
+def time_comparison(groups: dict[str, dict[str, Iterable[LogData]]]):
+    fig, axs = plt.subplots(len(groups), 1, figsize=(16, 10))
+    plt.subplots_adjust(top=0.85, wspace=0.5, hspace=0.5)
+    plt.title("Time comparison", fontsize=28)
+
+    for i, (algorithm, difficulties) in enumerate(groups.items()):
+        ax = axs[i]
+        ax.set_title(algorithm)
+        ax.set_xlabel("Time taken (s)")
+        ax.set_ylabel("Path difficulty")
+        ax.yaxis.grid(True, linestyle="-")
+        times_taken = []
+        for difficulty, logs in difficulties.items():
+            times_taken.append(np.array([(t := log["position_data"]["time"].to_numpy())[-1] - t[0] for log in logs]))
+        # boxplot with average time
+        ax.boxplot(times_taken)
+
+    plt.show()
+
+
+def plot_log_data(log_data: LogData):
+    metadata = log_data["metadata"]
+    title = f"{metadata['algorithm']} - {metadata['difficulty']} - {metadata['index']}"
+    position_data = log_data["position_data"]
+    obstacle_data = log_data["obstacle_data"]
     time = position_data["time"].to_numpy()
     px = position_data["px"].to_numpy()
     py = position_data["py"].to_numpy()
