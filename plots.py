@@ -1,28 +1,31 @@
+from pprint import pp
+
 import matplotlib.pyplot as plt
 import numpy as np
-from icecream import ic
+import seaborn as sns
+import pandas as pd
 
 from log_data import LogData
 from typing import Iterable
 
+sns.set_theme(style="ticks")
 
-def time_comparison(groups: dict[str, dict[str, Iterable[LogData]]]):
-    fig, axs = plt.subplots(len(groups), 1, figsize=(16, 10))
-    plt.subplots_adjust(top=0.85, wspace=0.5, hspace=0.5)
-    plt.title("Time comparison", fontsize=28)
 
-    for i, (algorithm, difficulties) in enumerate(groups.items()):
-        ax = axs[i]
-        ax.set_title(algorithm)
-        ax.set_xlabel("Time taken (s)")
-        ax.set_ylabel("Path difficulty")
-        ax.yaxis.grid(True, linestyle="-")
-        times_taken = []
-        for difficulty, logs in difficulties.items():
-            times_taken.append(np.array([(t := log["position_data"]["time"].to_numpy())[-1] - t[0] for log in logs]))
-        # boxplot with average time
-        ax.boxplot(times_taken)
+def plot_time_comparison(groups: dict[str, dict[str, Iterable[LogData]]]):
+    fig, ax = plt.subplots(figsize=(16, 10))
+    fig.suptitle("Time comparison", fontsize=28)
 
+    times_taken = [np.array([(t := log["position_data"]["time"].to_numpy())[-1] - t[0]
+                            for logs in difficulties.values()
+                            for log in logs])
+                   for difficulties in groups.values()]
+
+    labels = [f"{a} - {d}" for a, difficulties in groups.items() for d in difficulties.keys()]
+    times_taken_df = pd.DataFrame(np.array(times_taken).T, columns=labels)
+
+    sns.swarmplot(times_taken_df, size=16)
+    plt.setp(ax.get_xticklabels(), fontsize=16)
+    ax.yaxis.grid(True)
     plt.show()
 
 

@@ -9,7 +9,7 @@ import pandas as pd
 from icecream import ic
 
 from log_data import LogMetadata, LogData
-from plots import plot_log_data, time_comparison
+from plots import plot_log_data, plot_time_comparison
 
 T = TypeVar("T")
 K = TypeVar("K")
@@ -102,8 +102,8 @@ def process_log_dir(log_dir: str):
     with Pool() as p:
         logs_data = p.map(get_log_data, get_logs_metadata(log_dir), chunksize=3)
 
-    for log_data in logs_data:
-        plot_log_data(log_data)
+    # for log_data in logs_data:
+    #     plot_log_data(log_data)
 
     grouped_by_algorithm = group_by(logs_data, lambda ld: ld["metadata"]["algorithm"])
     logs_data_grouped_by_algorithm_and_difficulty = {
@@ -111,7 +111,7 @@ def process_log_dir(log_dir: str):
         for algorithm, logs in grouped_by_algorithm.items()
     }
 
-    time_comparison(logs_data_grouped_by_algorithm_and_difficulty)
+    plot_time_comparison(logs_data_grouped_by_algorithm_and_difficulty)
 
 
 def main(log_dir: str):
