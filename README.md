@@ -2,6 +2,8 @@
 
 Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Nearness Diagram). Para realizarla, se han creado los 3 escenarios o _worlds_ en Player/Stage. Cada uno de ellos presenta una dificultad de navegación distinta para el robot. 
 
+<br>
+
 ## Escenarios
 
 ### easy.world
@@ -19,7 +21,7 @@ Para probar los algoritmos, se han utilizado, en un principio, los parámetros r
 
 En el caso del algoritmo VFH:
 
-```
+```cfg
 driver
 (
   name "vfh"
@@ -30,8 +32,10 @@ driver
   angle_epsilon 5
 )
 ```
+
 Para el algoritmo ND:
-```
+
+```cfg
 driver
 (
   name "nd"
@@ -55,6 +59,24 @@ driver
   sonar_buffer 1
 )
 ```
+
+Para poder procesar los datos de posición y las lecturas del láser del robot, mediante ficheros de log, se ha configurado el driver `writelog` de la siguiente manera:
+
+
+```cfg
+# Log data from laser:0 and position2d:0 to "/home/ic/logs/mydata_YYYY_MM_DD_HH_MM_SS.log"
+driver(
+  name "writelog"
+  log_directory "/home/ic/logs"
+  basename "mydata"
+  requires ["laser:0" "position2d:0"]
+  provides ["log:0"]
+  alwayson 1
+  autorecord 1
+)
+``` 
+
+<br>
 
 ## Ejecución de las simulaciones 
 Para evitar realizar las simulaciones manualmente, se hizo uso del módulo `playerc` para Python. El script `run_simulation.py`, realiza 5 pruebas de cada algoritmo con cada uno de los ficheros de configuración en la lista `file_names`. En este caso, se están probando ambos algoritmos con dos configuraciones distintas: 
