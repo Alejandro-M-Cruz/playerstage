@@ -158,8 +158,14 @@ if __name__ == "__main__":
         for i in range(5):
             run_simulation(config_file, position2d_index=2)
 
-``` 
+```
 
+<br>
+
+## Lectura de ficheros de log y representación gráfica de los datos
+El script `main.py` toma como parámetro el directorio donde se encuentran los ficheros de log, por defecto `./logs`. Los ficheros de logs deben estar organizados de la siguiente manera: `<directorio de logs>/<algoritmo>/<dificultad>/*.log`. Por ejemplo: `/home/user/logs/vfh/easy/mydata2023_12_16_12_52_10.log`. Una vez localizados los ficheros, se leen sus datos y se representan mediante gráficas, gracias a las librerías `numpy`, `pandas`, `matplotlib` y `seaborn`. Por cada fichero de log, se almacenará una imagen en el directorio `plots`, con la representación gráfica de los datos de dicho fichero. 
+
+![vfh - easy - 3](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/62f48df8-6b22-495d-a056-fcf1b089a858)
 
 
 
