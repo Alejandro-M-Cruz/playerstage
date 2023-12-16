@@ -7,6 +7,7 @@ Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Ne
 ## Escenarios
 
 ### easy.world
+![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/14a307fb-c6ef-4288-8417-1d820ab56f15)
 
 
 ### medium.world
