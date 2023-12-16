@@ -6,7 +6,6 @@ from typing import Iterable, TypeVar, Callable
 
 import numpy as np
 import pandas as pd
-from icecream import ic
 
 from log_data import LogMetadata, LogData
 from plots import plot_log_data, plot_time_comparison
@@ -98,12 +97,26 @@ def get_log_data(log_metadata: LogMetadata) -> LogData:
     }
 
 
+def clear_dir(dir_path: str):
+    for sub_path in Path(dir_path).iterdir():
+        if sub_path.is_dir():
+            reset_dir(str(sub_path))
+        else:
+            sub_path.unlink()
+
+
+def reset_dir(dir_path: str):
+    path = Path(dir_path)
+    if path.exists():
+        clear_dir(dir_path)
+    else:
+        path.mkdir()
+
+
 def process_log_dir(log_dir: str):
     with Pool() as p:
         logs_data = p.map(get_log_data, get_logs_metadata(log_dir), chunksize=3)
-
-    # for log_data in logs_data:
-    #     plot_log_data(log_data)
+        p.map(plot_log_data, logs_data, chunksize=3)
 
     grouped_by_algorithm = group_by(logs_data, lambda ld: ld["metadata"]["algorithm"])
     logs_data_grouped_by_algorithm_and_difficulty = {
@@ -115,6 +128,7 @@ def process_log_dir(log_dir: str):
 
 
 def main(log_dir: str):
+    reset_dir("plots")
     process_log_dir(log_dir)
 
 

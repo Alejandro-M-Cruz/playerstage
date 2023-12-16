@@ -24,7 +24,7 @@ def plot_time_comparison(groups: dict[str, dict[str, Iterable[LogData]]]):
     sns.swarmplot(times_taken_df, size=16)
     plt.setp(ax.get_xticklabels(), fontsize=16)
     ax.yaxis.grid(True)
-    plt.show()
+    plt.savefig("plots/time_comparison.png")
 
 
 def plot_log_data(log_data: LogData):
@@ -74,5 +74,6 @@ def plot_log_data(log_data: LogData):
     ax4.set_xlabel("x (m)")
     ax4.set_ylabel("y (m)")
     ax4.set_zlabel("Scalar speed (m/s)")
+    ax4.view_init(30, -90)
 
-    plt.show()
+    plt.savefig(f"plots/{title}.png")
