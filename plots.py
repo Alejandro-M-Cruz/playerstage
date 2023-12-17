@@ -72,8 +72,8 @@ def plot_log_data(log_data: LogData):
     ax4.set_title("Path with scalar speed 3D visualization")
     ax4.scatter3D(px, py, scalar_speeds, c=time, marker=".")
     ax4.set_xlabel("x (m)")
-    ax4.set_ylabel("y (m)")
-    ax4.set_zlabel("Scalar speed (m/s)")
+    ax4.set_ylabel("y (m)", labelpad=14)
+    ax4.set_zlabel("Scalar speed (m/s)", labelpad=10)
     ax4.view_init(30, -90)
 
     plt.savefig(f"plots/{title}.png")
