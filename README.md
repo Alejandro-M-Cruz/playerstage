@@ -80,7 +80,7 @@ driver(
 <br>
 
 ## Ejecución de las simulaciones 
-Para evitar realizar las simulaciones manualmente, se hizo uso del módulo `playerc` para Python. El script `run_simulation.py`, realiza 5 pruebas de cada algoritmo con cada uno de los ficheros de configuración en la lista `file_names`. En este caso, se están probando ambos algoritmos con dos configuraciones distintas: 
+Para evitar realizar las simulaciones manualmente, se hizo uso del módulo `playerc` para Python. El script `run_simulation.py`, realiza **5 pruebas** de cada algoritmo, con cada uno de los ficheros de configuración en la lista `file_names`. En este caso, se están probando ambos algoritmos con dos configuraciones distintas: 
 
 - La configuración inicial, contenida en el fichero `initial-easy.cfg`, que utiliza el escenario fácil (`easy.world`).
 - La configuración modificada, contenida en los ficheros `changed-easy.cfg`, `changed-medium.cfg` y `changed-hard.cfg`. La configuración es la misma para los tres ficheros, cambiando únicamente el escenario en que se ejecutan: `easy.world`, `medium.world` y `hard.world`, respectivamente.
