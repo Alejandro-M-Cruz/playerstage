@@ -90,7 +90,7 @@ Se muestra a continuación dicho script:
 import os
 import subprocess
 import sys
-from time import sleep
+import time
 
 sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
 
@@ -135,7 +135,7 @@ def move_robot(position2d_index):
     while not reached_target():
         client.read()
         if time.time() - start > 300:
-          break
+            break
 
     laser.unsubscribe()
     position2d.unsubscribe()
@@ -144,11 +144,11 @@ def move_robot(position2d_index):
 
 def run_simulation(config_file, position2d_index):
     player_process = start_player(config_file)
-    sleep(2)
+    time.sleep(2)
     move_robot(position2d_index)
     player_process.terminate()
     player_process.wait()
-    sleep(0.5)
+    time.sleep(0.5)
 
 
 if __name__ == "__main__":
