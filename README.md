@@ -122,7 +122,6 @@ def move_robot(position2d_index):
     target_x = -8
     target_y = -7.5
     target_theta = 0
-    position2d.set_cmd_pose(target_x, target_y, target_theta, 1)
 
     def reached_target():
         x_distance_to_target = abs(target_x - position2d.px)
@@ -130,8 +129,13 @@ def move_robot(position2d_index):
         is_still = position2d.vx == 0 and position2d.vy == 0 and position2d.va == 0
         return x_distance_to_target < 0.5 and y_distance_to_target < 0.5 and is_still
 
+    position2d.set_cmd_pose(target_x, target_y, target_theta, 1)
+    start = time.time()
+
     while not reached_target():
         client.read()
+        if time.time() - start > 300:
+          break
 
     laser.unsubscribe()
     position2d.unsubscribe()
