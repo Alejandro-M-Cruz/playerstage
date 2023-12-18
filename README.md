@@ -239,3 +239,40 @@ A pesar de que, al realizar este cambio, en las gráficas se muestra un ligero i
 
 ![nd - easy - 5](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/3218c49a-0255-4c54-9e4f-4afde87e8c54)
 
+<br>
+
+## Resultados
+La siguiente gráfica, titulada _Time comparison_, muestra el tiempo, en segundos, que el robot ha tardado en alcanzar el objetivo en cada escenario con cada algoritmo. 
+
+![time_comparison](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/4cb75d16-3716-44f6-aa13-9454e9b61f93)
+
+De nuevo, se observa como la configuración inicial del algoritmo VFH tiene, en promedio, un rendimiento significativamente peor en comparación con la configuración final. Asimismo, los cambios en la configuración del algoritmo ND parecen empeorarlo ligeramente, aunque, tal y como se mencionó anteriormente, esto se debe a la reducción de la tolerancia.
+
+
+En cuanto al **algoritmo ND**, se observa un progresivo aumento del tiempo según aumenta la dificultad de los escenarios, siendo las 5 pruebas realizadas en cada escenario muy similares entre sí, tal y como se puede ver en el siguiente ejemplo:
+
+![nd - medium - 3](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/933955cf-07bf-433d-8c62-05814099a102)
+
+![nd - medium - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/af7b9920-e1ba-4c90-8721-50246a11b678)
+
+
+En las pruebas del **algoritmo VFH**, se aprecia una variación mucho mayor entre cada una, tanto en la trayectoria seguida como en el tiempo consumido. Las siguientes imágenes, correspondientes al escenario fácil (_easy.world_), lo ejemplifican:
+
+![vfh - easy - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/856ea53b-2fc5-4ea5-bcfa-e591c5f85ae0)
+
+![vfh - easy - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/b6ef64ba-274f-4adf-b867-147840fe44ea)
+
+Por otra parte, ninguna de las 5 pruebas de este algoritmo fue capaz de alcanzar el objetivo en el escenario difícil, _hard.world_. Todas ellas fueron detenidas a los 5 minutos, aunque algunas muestran un mayor progreso que otras, como se puede ver a continuación:
+
+![vfh - hard - 1](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/53e685bc-0964-450e-b54f-1fdf9b844e5c)
+
+![vfh - hard - 2](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/01ef6ddb-1fd0-4e7c-9a61-9191f5fe83c3)
+
+
+## Conclusión
+Finalmente, se puede concluir que, al menos con los datos obtenidos en esta comparación, el algoritmo ND tiene un rendimiento muy superior al obtenido con el algoritmo VFH. Tanto es así, que en las 15 pruebas realizadas con cada uno de ellos, solo en una el algoritmo VFH ha dado mejor resultado. Es el caso de la cuarta prueba en el escenario fácil, que se muestra a continuación:
+
+![vfh - easy - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/856ea53b-2fc5-4ea5-bcfa-e591c5f85ae0)
+
+Aún así, esta prueba ha sido la excepción, puesto que en el resto de pruebas para este mismo escenario, el algoritmo ND ha completado la ruta en menor tiempo.
+
