@@ -60,8 +60,23 @@ def get_laser_data(laser_lines):
 def get_position_data(position_lines):
     next(position_lines)
     position_readings = np.genfromtxt(position_lines, usecols=[0, 7, 8, 9, 10, 11, 12])
-    position_fields = ["time", "px", "py", "pa", "vx", "vy", "va"]
-    return pd.DataFrame(position_readings, columns=position_fields)
+
+    vx = position_readings[:, 4]
+    vy = position_readings[:, 5]
+    scalar_speed = np.sqrt(vx ** 2 + vy ** 2).reshape((-1, 1))
+
+    time = position_readings[:, 0]
+    a = np.diff(scalar_speed, axis=0) / np.diff(time).reshape((-1, 1))
+    a = np.insert(a, 0, 0, axis=0)
+
+    target_x = -8
+    target_y = -7.5
+    px = position_readings[:, 1]
+    py = position_readings[:, 2]
+    distance_to_target = np.sqrt((px - target_x) ** 2 + (py - target_y) ** 2).reshape((-1, 1))
+
+    position_fields = ["time", "px", "py", "pa", "vx", "vy", "va", "scalar_speed", "a", "distance_to_target"]
+    return pd.DataFrame(np.hstack((position_readings, scalar_speed, a, distance_to_target)), columns=position_fields)
 
 
 def get_obstacle_data(position_data, laser_data):
@@ -70,14 +85,16 @@ def get_obstacle_data(position_data, laser_data):
                                laser_reading["count"])
     pa = position_data["pa"].to_numpy()
     angles = pa.repeat(len(laser_angles)).reshape((-1, len(laser_angles))) + laser_angles
-    ranges = np.stack(laser_data["ranges"].values)
+    range_values = laser_data["ranges"].values
+    ranges = np.stack(range_values)
     obs_relative_x, obs_relative_y = polar_to_cartesian(ranges, angles)
     row_size = obs_relative_x.shape[1]
     obs_x = position_data["px"].to_numpy().repeat(row_size).reshape(-1, row_size) + obs_relative_x
     obs_y = position_data["py"].to_numpy().repeat(row_size).reshape(-1, row_size) + obs_relative_y
+    distance_to_nearest_obstacle = ranges.min(axis=1, initial=8, where=~np.isnan(ranges))
     return pd.DataFrame(
-        ([t, x, y] for t, x, y in zip(laser_data["time"], obs_x, obs_y)),
-        columns=["time", "obs_x", "obs_y"]
+        ([t, x, y, d] for t, x, y, d in zip(laser_data["time"], obs_x, obs_y, distance_to_nearest_obstacle)),
+        columns=["time", "obs_x", "obs_y", "distance_to_nearest_obstacle"]
     )
 
 

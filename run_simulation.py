@@ -1,7 +1,7 @@
 import os
 import subprocess
 import sys
-import time
+from time import sleep
 
 sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
 
@@ -41,11 +41,10 @@ def move_robot(position2d_index):
         return x_distance_to_target < 0.5 and y_distance_to_target < 0.5 and is_still
 
     position2d.set_cmd_pose(target_x, target_y, target_theta, 1)
-    start = time.time()
 
-    while not reached_target():
+    for i in range(3000):
         client.read()
-        if time.time() - start > 300:
+        if reached_target():
             break
 
     laser.unsubscribe()
@@ -55,11 +54,11 @@ def move_robot(position2d_index):
 
 def run_simulation(config_file, position2d_index):
     player_process = start_player(config_file)
-    time.sleep(2)
+    sleep(2)
     move_robot(position2d_index)
     player_process.terminate()
     player_process.wait()
-    time.sleep(0.5)
+    sleep(0.5)
 
 
 if __name__ == "__main__":
