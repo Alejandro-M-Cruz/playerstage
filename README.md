@@ -18,7 +18,7 @@ Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Ne
 <br>
 
 ## Configuración de los algoritmos
-Para probar los algoritmos, se han utilizado, en un principio, los parámetros recomendados en la sección _Example_ de cada uno de ellos. 
+Para probar los algoritmos, se han utilizado, en un principio, los parámetros recomendados en la sección _Example_ de la documentación correspondiente a cada uno de ellos. 
 
 En el caso del algoritmo [VFH](https://playerstage.sourceforge.net/doc/Player-2.0.0/player/group__driver__vfh.html):
 
@@ -276,3 +276,4 @@ Finalmente, se puede concluir que, al menos con los datos obtenidos en esta comp
 
 Aún así, esta prueba ha sido la excepción, puesto que en el resto de pruebas para este mismo escenario, el algoritmo ND ha completado la ruta en menor tiempo.
 
+Estas diferencias de tiempo se deben a que, mientras que el algoritmo ND mantiene el robot en movimiento en todo momento y sortea los obstáculos progresivamente, girando mientras avanza, el algoritmo VFH determina trayectorias más rectas y, al toparse con un obstáculo, detiene el robot y lo hace rotar sobre sí mismo hasta encontrar una nueva trayectoria, repitiendo sucesivamente esta secuencia. 
