@@ -10,7 +10,7 @@ Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Ne
 ![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/14a307fb-c6ef-4288-8417-1d820ab56f15)
 
 ### medium.world
-
+![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/b1295d71-3b7f-44a0-84aa-e704966fa6f8)
 
 ### hard.world
 ![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/3f4f7689-82a9-46a6-90d9-ecc100668059)
@@ -90,7 +90,7 @@ Se muestra a continuación dicho script:
 import os
 import subprocess
 import sys
-import time
+from time import sleep
 
 sys.path.insert(0, "/usr/local/lib/python2.7/site-packages")
 
@@ -130,11 +130,10 @@ def move_robot(position2d_index):
         return x_distance_to_target < 0.5 and y_distance_to_target < 0.5 and is_still
 
     position2d.set_cmd_pose(target_x, target_y, target_theta, 1)
-    start = time.time()
-
-    while not reached_target():
+  
+    for i in range(3000):
         client.read()
-        if time.time() - start > 300:
+        if reached_target():
             break
 
     laser.unsubscribe()
@@ -144,11 +143,11 @@ def move_robot(position2d_index):
 
 def run_simulation(config_file, position2d_index):
     player_process = start_player(config_file)
-    time.sleep(2)
+    sleep(2)
     move_robot(position2d_index)
     player_process.terminate()
     player_process.wait()
-    time.sleep(0.5)
+    sleep(0.5)
 
 
 if __name__ == "__main__":
@@ -164,6 +163,7 @@ if __name__ == "__main__":
             run_simulation(config_file, position2d_index=2)
 
 ```
+Las pruebas tienen una duración máxima de 5 minutos. Si alguna prueba excede los 5 minutos, se para automáticamente y se considera que no se ha alcanzado el objetivo.
 
 <br>
 
