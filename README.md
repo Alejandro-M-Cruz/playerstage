@@ -10,10 +10,10 @@ Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Ne
 ![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/14a307fb-c6ef-4288-8417-1d820ab56f15)
 
 ### medium.world
-![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/e6033d44-2434-48f6-af5e-1bfabbbe750a)
+
 
 ### hard.world
-![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/82d14890-7401-495c-b4ec-acc38ef5cfc3)
+![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/3f4f7689-82a9-46a6-90d9-ecc100668059)
 
 <br>
 
