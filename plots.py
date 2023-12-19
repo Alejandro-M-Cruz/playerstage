@@ -38,7 +38,6 @@ def plot_log_data(log_data: LogData):
     px = position_data["px"].to_numpy()
     py = position_data["py"].to_numpy()
     scalar_speed = position_data["scalar_speed"].to_numpy()
-    distance_to_target = position_data["distance_to_target"].to_numpy()
     obs_x = np.stack(obstacle_data["obs_x"].values).flatten()
     obs_y = np.stack(obstacle_data["obs_y"].values).flatten()
 
@@ -55,20 +54,19 @@ def plot_log_data(log_data: LogData):
     ax1.axis("equal")
 
     ax2.set_title("Distance to target")
-    ax2.plot(time, distance_to_target, linewidth=1)
+    ax2.plot(time, position_data["distance_to_target"].to_numpy(), linewidth=1)
     ax2.set_xlabel("Time (s)")
     ax2.set_ylabel("Distance to target (m)")
 
-    ax3.set_title("Acceleration")
-    ax3.plot(time, position_data["a"], linewidth=0.5)
+    ax3.set_title("Speed")
+    ax3.plot(time, scalar_speed, linewidth=0.5)
     ax3.set_xlabel("Time (s)")
-    ax3.set_ylabel("Acceleration (m/s^2)")
+    ax3.set_ylabel("Speed (m/s)")
 
-    ax4.set_title("Scalar speed vs distance to target")
-    ax4.plot(distance_to_target, scalar_speed, linewidth=0.5)
-    ax4.set_xlabel("Distance to target (m)")
-    ax4.set_ylabel("Scalar speed (m/s)")
-    ax4.invert_xaxis()
+    ax4.set_title("Acceleration")
+    ax4.plot(time, position_data["a"], linewidth=0.5)
+    ax4.set_xlabel("Time (s)")
+    ax4.set_ylabel("Acceleration (m/s^2)")
 
     ax5.set_title("Distance to nearest obstacle")
     ax5.plot(time, obstacle_data["distance_to_nearest_obstacle"], linewidth=1)
