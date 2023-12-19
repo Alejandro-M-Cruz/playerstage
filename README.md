@@ -170,7 +170,7 @@ Las pruebas tienen una duración máxima de 5 minutos. Si alguna prueba excede l
 ## Lectura de ficheros de log y representación gráfica de los datos
 El script `main.py` toma como parámetro el directorio donde se encuentran los ficheros de log, por defecto `./logs`. Los ficheros de logs deben estar organizados de la siguiente manera: `<directorio de logs>/<algoritmo>/<dificultad>/*.log`. Por ejemplo: `/home/user/logs/vfh/easy/mydata2023_12_16_12_52_10.log`. Una vez localizados los ficheros, se leen sus datos y se representan mediante gráficas, gracias a las librerías `numpy`, `pandas`, `matplotlib` y `seaborn`. Por cada fichero de log, se almacenará una imagen en el directorio `plots`, con la representación gráfica de los datos de dicho fichero. 
 
-![vfh - easy - 3](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/bf43db10-90da-49aa-9897-f921a95bdadf)
+![nd - easy - 3](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/ab13adef-51dc-423d-b436-d796aafca3a6)
 
 <br>
 
@@ -196,11 +196,11 @@ Como se puede observar en el siguiente ejemplo, estas modificaciones mejoran con
 
 - Configuración inicial:
 
-![vfh-initial - easy - 2](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/71bf21f9-a1b9-4f06-8841-52eea8f5d862)
+![vfh-initial - easy - 2](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/feded8fe-dbca-429e-b81c-0ce640e7aeed)
 
 - Configuración modificada:
 
-![vfh - easy - 2](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/eee3f8bc-7e3e-41ea-b732-5da024d268ce)
+![vfh - easy - 2](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/3668205f-8fa2-4e06-b0c5-3d0ece088613)
 
 
 Por último, se ha cambiado la configuración del algoritmo ND, para que este solo utilice el sensor láser y no el ultrasónico. Este cambio tiene el objetivo de lograr una comparacón más uniforme con el primer algoritmo, dado que VFH solo puede utilizar uno de los dos sensores, el láser en este caso. La configuración final para este algoritmo es la siguiente:
@@ -233,11 +233,11 @@ A pesar de que, al realizar este cambio, en las gráficas se muestra un ligero i
 
 - Configuración inicial:
 
-![nd-initial - easy - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/c96fbfb2-cb09-474a-b571-70bbbe8aa164)
+![nd-initial - easy - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/9772457b-98ad-4df3-a375-b284f9909298)
 
 - Configuración modificada:
 
-![nd - easy - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/dea12e4b-8fab-430b-b7f0-31da7e3a13c8)
+![nd - easy - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/6d9feb2b-5c53-4715-88f7-0cd5270d11fd)
 
 <br>
 
@@ -251,28 +251,28 @@ De nuevo, se observa como la configuración inicial del algoritmo VFH tiene, en 
 
 En cuanto al **algoritmo ND**, se observa un progresivo aumento del tiempo según aumenta la dificultad de los escenarios, siendo las 5 pruebas realizadas en cada escenario muy similares entre sí, tal y como se puede ver en el siguiente ejemplo:
 
-![nd - medium - 3](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/fa5f1422-c84a-445a-9e75-6a2b46ad9615)
+![nd - medium - 3](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/34048597-5057-4970-8d3f-51d79d8471ac)
 
-![nd - medium - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/b1033245-a694-4b72-ae96-22d366718a53)
+![nd - medium - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/65b3fd85-cc6e-40ae-abfb-712af3c3482c)
 
 
 En las pruebas del **algoritmo VFH**, se aprecia una variación mucho mayor entre cada una, tanto en la trayectoria seguida como en el tiempo consumido. Las siguientes imágenes, correspondientes al escenario fácil (_easy.world_), lo ejemplifican:
 
-![vfh - easy - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/4f217e91-464b-437f-a139-b4eaf2080187)
+![vfh - easy - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/b3824e1e-d959-4f9a-acac-368cdd8d53f4)
 
-![vfh - easy - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/3a6c405c-19bd-4c09-882e-ea46eed6d8bb)
+![vfh - easy - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/73bade3a-6c3e-4265-93e7-afe7cded3ffa)
 
 Por otra parte, ninguna de las 5 pruebas de este algoritmo fue capaz de alcanzar el objetivo en el escenario difícil, _hard.world_. Todas ellas fueron detenidas a los 5 minutos, aunque algunas muestran un mayor progreso que otras, como se puede ver a continuación:
 
-![vfh - hard - 1](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/e63c65f3-a914-4d00-b101-eff621f45ceb)
+![vfh - hard - 1](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/fc5df57b-02bc-4b75-8685-2457ddab8f96)
 
-![vfh - hard - 2](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/84849eaf-1833-40d9-a02f-6a03f03d7a4e)
+![vfh - hard - 2](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/50a6ec1d-59dc-4e20-91fb-eb76d407e32f)
 
 
 ## Conclusión
 Finalmente, se puede concluir que, al menos con los datos obtenidos en esta comparación, el algoritmo ND tiene un rendimiento muy superior al obtenido con el algoritmo VFH. Tanto es así, que en las 15 pruebas realizadas con cada uno de ellos, solo en una el algoritmo VFH ha dado mejor resultado. Es el caso de la cuarta prueba en el escenario fácil, que se muestra a continuación:
 
-![vfh - easy - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/e2f5062e-e4a6-4c2c-8c6b-4b64f3d3db4f)
+![vfh - hard - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/247ce065-1960-42ec-a01a-7050e13d2db4)
 
 Aún así, esta prueba ha sido la excepción, puesto que en el resto de pruebas para este mismo escenario, el algoritmo ND ha completado la ruta en menor tiempo.
 
