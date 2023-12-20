@@ -42,6 +42,7 @@ def plot_log_data(log_data: LogData):
     obs_y = np.stack(obstacle_data["obs_y"].values).flatten()
 
     fig, ((ax1, ax2), (ax3, ax4), (ax5, ax6)) = plt.subplots(3, 2, figsize=(16, 18))
+    ax6.remove()
     fig.suptitle(title, fontsize=28)
     plt.subplots_adjust(wspace=0.3, hspace=0.4, left=0.1, right=0.9, top=0.9, bottom=0.05)
 
@@ -73,14 +74,20 @@ def plot_log_data(log_data: LogData):
     ax5.set_xlabel("Time (s)")
     ax5.set_ylabel("Distance to nearest obstacle (m)")
 
-    ax6.remove()
-    ax6 = fig.add_subplot(3, 2, 6, projection="3d")
-    ax6.set_title("Path with scalar speed 3D visualization")
-    ax6.scatter3D(px, py, scalar_speed, c=time, marker=".")
-    ax6.set_xlabel("x (m)")
-    ax6.set_ylabel("y (m)", labelpad=14)
-    ax6.set_zlabel("Scalar speed (m/s)", labelpad=10)
-    ax6.view_init(30, -90)
-
     plt.savefig(f"plots/{title}.png")
+    plt.close(fig)
+
+    fig = plt.figure(figsize=(10, 9))
+    fig.suptitle(title)
+
+    ax3d = fig.add_subplot(1, 1, 1, projection="3d")
+    ax3d.set_title("Path with speed 3D visualization")
+    ax3d.scatter3D(px, py, scalar_speed, c=time, marker=".")
+    ax3d.set_xlabel("x (m)")
+    ax3d.set_ylabel("y (m)", labelpad=14)
+    ax3d.set_zlabel("Speed (m/s)", labelpad=25)
+    ax3d.tick_params(axis="z", pad=10)
+    ax3d.view_init(30, -90)
+
+    plt.savefig(f"plots/{title} - 3d.png")
     plt.close(fig)
