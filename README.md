@@ -1,6 +1,6 @@
 # Algoritmos VFH y ND en Player/Stage
 
-Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Nearness Diagram). Para realizarla, se han creado los 3 escenarios o _worlds_ en Player/Stage. Cada uno de ellos presenta una dificultad de navegación distinta para el robot. 
+Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Nearness Diagram). Para realizarla, se han creado 4 escenarios o _worlds_ en Player/Stage. Cada uno de ellos presenta una dificultad de navegación distinta para el robot. 
 
 <br>
 
@@ -14,6 +14,9 @@ Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Ne
 
 ### hard.world
 ![image](https://github.com/Alejandro-M-Cruz/playerstage/assets/113340373/3f4f7689-82a9-46a6-90d9-ecc100668059)
+
+### realistic.world
+![realistic-world-with-goal](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/5a357ef5-f33c-4c21-b6c0-84ccffe92b2d)
 
 <br>
 
@@ -109,7 +112,7 @@ def start_player(config_file):
     return subprocess.Popen(["player", "-d", "9", "-q", config_file])
 
 
-def move_robot(position2d_index):
+def move_robot(target, position2d_index):
     client = playerc_client(None, "localhost", 6665)
     client.connect()
 
@@ -119,9 +122,7 @@ def move_robot(position2d_index):
     position2d = playerc_position2d(client, position2d_index)
     position2d.subscribe(PLAYERC_OPEN_MODE)
 
-    target_x = -8
-    target_y = -7.5
-    target_theta = 0
+    target_x, target_y, target_theta = target
 
     def reached_target():
         x_distance_to_target = abs(target_x - position2d.px)
@@ -144,7 +145,8 @@ def move_robot(position2d_index):
 def run_simulation(config_file, position2d_index):
     player_process = start_player(config_file)
     sleep(2)
-    move_robot(position2d_index)
+    target = (-1, 6, 0) if "realistic" in config_file else (-8, -7.5, 0)
+    move_robot(target, position2d_index)
     player_process.terminate()
     player_process.wait()
     sleep(0.5)
@@ -153,7 +155,13 @@ def run_simulation(config_file, position2d_index):
 if __name__ == "__main__":
     clear_log_dir("/home/ic/logs")
     worlds_dir = "/home/ic/installations/player-stage/stage-2.1.1/worlds/"
-    file_names = ["initial-easy.cfg", "changed-easy.cfg", "changed-medium.cfg", "changed-hard.cfg"]
+    file_names = [
+        "initial-easy.cfg",
+        "changed-easy.cfg",
+        "changed-medium.cfg",
+        "changed-hard.cfg",
+        "changed-realistic.cfg"
+    ]
 
     for config_file_name in file_names:
         config_file = worlds_dir + config_file_name
