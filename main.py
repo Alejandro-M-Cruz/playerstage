@@ -57,7 +57,7 @@ def get_laser_data(laser_lines):
     return laser_data
 
 
-def get_position_data(position_lines):
+def get_position_data(position_lines, target_position: tuple[float, float]):
     next(position_lines)
     position_readings = np.genfromtxt(position_lines, usecols=[0, 7, 8, 9, 10, 11, 12])
 
@@ -69,8 +69,7 @@ def get_position_data(position_lines):
     a = np.diff(scalar_speed, axis=0) / np.diff(time).reshape((-1, 1))
     a = np.insert(a, 0, 0, axis=0)
 
-    target_x = -8
-    target_y = -7.5
+    target_x, target_y = target_position
     px = position_readings[:, 1]
     py = position_readings[:, 2]
     distance_to_target = np.sqrt((px - target_x) ** 2 + (py - target_y) ** 2).reshape((-1, 1))
@@ -103,8 +102,9 @@ def polar_to_cartesian(r, theta):
 
 
 def get_log_data(log_metadata: LogMetadata) -> LogData:
-    laser_data = get_laser_data(read_log(log_metadata["path"], "laser"))
-    position_data = get_position_data(read_log(log_metadata["path"], "position2d"))
+    laser_data = get_laser_data(read_log(path := log_metadata["path"], "laser"))
+    target_position = (-1, 6) if log_metadata["difficulty"] == "realistic" else (-8, -7.5)
+    position_data = get_position_data(read_log(path, "position2d"), target_position)
     obstacle_data = get_obstacle_data(position_data, laser_data)
     return {
         "metadata": log_metadata,
