@@ -11,7 +11,7 @@ sns.set_theme(style="ticks")
 
 
 def plot_time_comparison(groups: dict[str, dict[str, Iterable[LogData]]]):
-    fig, ax = plt.subplots(figsize=(16, 10))
+    fig, ax = plt.subplots(figsize=(16, 11))
     fig.suptitle("Time comparison", fontsize=28)
 
     times_taken = [
@@ -21,7 +21,7 @@ def plot_time_comparison(groups: dict[str, dict[str, Iterable[LogData]]]):
     labels = [f"{a} - {d}" for a, difficulties in groups.items() for d in difficulties.keys()]
     times_taken_df = pd.DataFrame(np.array(times_taken).T, columns=labels)
 
-    sns.swarmplot(times_taken_df, size=16)
+    sns.swarmplot(times_taken_df, size=14)
     plt.setp(ax.get_xticklabels(), fontsize=12)
     ax.yaxis.grid(True)
     ax.set_ylabel("Time taken (s)", fontsize=24, labelpad=16)
