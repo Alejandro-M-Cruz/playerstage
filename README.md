@@ -260,7 +260,7 @@ A pesar de que, al realizar este cambio, en las gráficas se muestra un ligero i
 ## Resultados
 La siguiente gráfica, titulada _Time comparison_, muestra el tiempo, en segundos, que el robot ha tardado en alcanzar el objetivo en cada escenario con cada algoritmo. 
 
-![time_comparison](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/744fe2d5-d185-4fd8-8e80-fc0a6b19ec8c)
+![time_comparison](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/496a1f11-b355-48d1-9c9c-b0f78d526d05)
 
 De nuevo, se observa como la configuración inicial del algoritmo VFH tiene, en promedio, un rendimiento significativamente peor en comparación con la configuración final. Asimismo, los cambios en la configuración del algoritmo ND parecen empeorarlo ligeramente, aunque, tal y como se mencionó anteriormente, esto se debe a la reducción de la tolerancia.
 
@@ -271,6 +271,7 @@ En cuanto al **algoritmo ND**, se observa un progresivo aumento del tiempo segú
 
 ![nd - medium - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/dc185a35-05c4-4e7f-9834-8f74c42d77c0)
 
+Como se puede observar, en el escenario realista, el tiempo de cada prueba fue de aproximadamente 150 segundos. Aún así, en estas pruebas no se alcanzó el objetivo, puesto que el robot se bloqueó y la simulación se detuvo automáticamente tras ese tiempo.
 
 En las pruebas del **algoritmo VFH**, se aprecia una variación mucho mayor entre cada una, tanto en la trayectoria seguida como en el tiempo consumido. Las siguientes imágenes, correspondientes al escenario fácil (_easy.world_), lo ejemplifican:
 
@@ -286,10 +287,17 @@ Por otra parte, ninguna de las 5 pruebas de este algoritmo fue capaz de alcanzar
 
 
 ## Conclusión
-Finalmente, se puede concluir que, al menos con los datos obtenidos en esta comparación, el algoritmo ND tiene un rendimiento muy superior al obtenido con el algoritmo VFH. Tanto es así, que en las 15 pruebas realizadas con cada uno de ellos, solo en una el algoritmo VFH ha dado mejor resultado. Es el caso de la cuarta prueba en el escenario fácil, que se muestra a continuación:
+Finalmente, se puede concluir que, al menos con los datos obtenidos en esta comparación, el algoritmo ND tiene un rendimiento superior al obtenido con el algoritmo VFH. Tanto es así, que en las 15 pruebas realizadas con cada uno de ellos, solo en una el algoritmo VFH ha finalizado el recorrido en menor tiempo. Es el caso de la cuarta prueba en el escenario fácil, que se muestra a continuación:
 
 ![vfh - easy - 4](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/07d40146-92f9-4467-8c33-0cfc5d8b3bd5)
+![vfh - easy - 4 - 3d](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/446494d4-b314-4bf3-b3ea-aa3f6409ed57)
 
-Aún así, esta prueba ha sido la excepción, puesto que en el resto de pruebas para este mismo escenario, el algoritmo ND ha completado la ruta en menor tiempo.
+Esta prueba ha sido la excepción, puesto que en el resto de pruebas para este mismo escenario, el algoritmo ND ha completado la ruta en menor tiempo. Estas diferencias de tiempo se deben a que, mientras que el algoritmo ND mantiene el robot en movimiento en todo momento y sortea los obstáculos progresivamente, girando mientras avanza, el algoritmo VFH determina trayectorias más rectas y, al toparse con un obstáculo, detiene el robot y lo hace rotar sobre sí mismo hasta encontrar una nueva trayectoria, repitiendo sucesivamente esta secuencia. Asimismo, el algoritmo VFH tiende a estancarse ante la presencia de varios obstáculos alrededor del robot.
 
-Estas diferencias de tiempo se deben a que, mientras que el algoritmo ND mantiene el robot en movimiento en todo momento y sortea los obstáculos progresivamente, girando mientras avanza, el algoritmo VFH determina trayectorias más rectas y, al toparse con un obstáculo, detiene el robot y lo hace rotar sobre sí mismo hasta encontrar una nueva trayectoria, repitiendo sucesivamente esta secuencia. Asimismo, el algoritmo VFH tiende a estancarse ante la presencia de varios obstáculos alrededor del robot.
+No obstante, cabe destacar el caso del escenario realista, en el cual ninguno de los algoritmos ha logrado alcanzar el objetivo. En este escenario, si bien las pruebas del algoritmo VFH han tomado 300 segundos (5 minutos), frente a los 150 segundos del algoritmo ND, esto se debe a que el algoritmo ND se bloquea al poco de comenzar la simulación y esta se detiene automáticamente a los 150 segundos, aproximadamente. En realidad, como se puede observar, el algoritmo VFH se ha acercado más al objetivo en las cinco pruebas realizadas:
+
+![vfh - realistic - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/9266eb5e-3ca7-4580-b60f-0f0da8d369aa)
+![vfh - realistic - 5 - 3d](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/0d3c9de7-fe94-4f54-b393-e5639438fd79)
+
+![nd - realistic - 5](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/46a7f828-eea4-4097-9909-701e15a5656f)
+![nd - realistic - 5 - 3d](https://github.com/Alejandro-M-Cruz/vfh-vs-nd-playerstage/assets/113340373/16355cde-2221-49a7-b4ba-83f4f161aa99)
