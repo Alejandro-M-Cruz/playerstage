@@ -1,6 +1,12 @@
 # Algoritmos VFH y ND en Player/Stage
 
-Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Nearness Diagram). Para realizarla, se han creado 4 escenarios o _worlds_ en Player/Stage. Cada uno de ellos presenta una dificultad de navegación distinta para el robot. 
+Esta es una comparación de los algoritmos VFH (Vector Field Histogram) y ND (Nearness Diagram). Para ello, se han creado 4 escenarios o _worlds_ en Player/Stage. Cada uno de ellos presenta una dificultad de navegación distinta para el robot. 
+
+Realizado por: \
+Alejandro Matías Cruz de la Cruz \
+Daniel Oliver Quintero Svengaard \
+Javier Ocón Barreiro \
+Iván Ojeda Martín 
 
 <br>
 
